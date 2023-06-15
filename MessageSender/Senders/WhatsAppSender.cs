@@ -32,7 +32,7 @@ namespace MessageSender.Senders
         /// <param name="recipient">The recipient's contact information.</param>
         /// <param name="message">The message content to be sent.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public override async Task SendMessage(string recipient, string message)
+        public override void SendMessage(string recipient, string message)
         {
             try
             {

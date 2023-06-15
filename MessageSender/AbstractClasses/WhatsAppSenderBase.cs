@@ -18,7 +18,7 @@ namespace MessageSender.AbstractClasses
         /// <param name="recipient">The recipient's contact information.</param>
         /// <param name="message">The message content to be sent.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public abstract Task SendMessage(string recipient, string message);
+        public abstract void SendMessage(string recipient, string message);
 
         // TODO: Implement the SetWhatsAppCredentials method to set the credentials required for sending WhatsApp messages.
         /// <summary>

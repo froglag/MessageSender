@@ -17,6 +17,6 @@ namespace MessageSender.Interfaces
         /// <param name="recipient">The recipient's contact information.</param>
         /// <param name="message">The message content to be sent.</param>
         /// <returns>A task representing the asynchronous sending operation.</returns>
-        Task SendMessage(string recipient, string message);
+        void SendMessage(string recipient, string message);
     }
 }

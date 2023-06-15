@@ -11,6 +11,7 @@ namespace MessageSender.Interfaces
     /// </summary>
     public interface ISmsSender : IMessageSender
     {
+
         /// <summary>
         /// Sets the credentials required for sending SMS messages.
         /// </summary>

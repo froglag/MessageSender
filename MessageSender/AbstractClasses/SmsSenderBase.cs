@@ -19,9 +19,10 @@ namespace MessageSender.AbstractClasses
         protected string AuthToken { get; private set; }
         protected string PhoneNumber { get; private set; }
 
+        public int MaxMessageLength { get; set; } = 250;
 
         public event ExceptionEventHandler ExceptionOccurred;
-        public abstract Task SendMessage(string recipient, string message);
+        public abstract void SendMessage(string recipient, string message);
 
         /// <summary>
         /// Sets the credentials required for sending SMS messages.
@@ -44,6 +45,10 @@ namespace MessageSender.AbstractClasses
         protected virtual void HandleException(Exception ex)
         {
             ExceptionOccurred?.Invoke(this, new ExceptionEventArgs(ex));
+        }
+        protected bool IsMessageValid(string message)
+        {
+            return message.Length <= MaxMessageLength;
         }
     }
 }
