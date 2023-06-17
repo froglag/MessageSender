@@ -63,25 +63,25 @@ namespace MessageSender.Senders
 
             if (!IsMessageValid(message))
             {
-                Console.WriteLine("Message exceeds the maximum length. Message not sent.");
+                logger.Error("Message exceeds the maximum length. Message not sent.");
                 throw new InvalidOperationException("Message exceeds the maximum length.");
             }
 
             if (!PhoneNumberValidator.IsValidRecipientPhoneNumber(recipient))
             {
-                Console.WriteLine("Invalid recipient number format. Message not sent.");
+                logger.Error("Invalid recipient number format. Message not sent.");
                 throw new FormatException("Invalid recipient number format.");
             }
 
             if (!PhoneNumberValidator.IsValidPhoneNumber(PhoneNumber))
             {
-                Console.WriteLine("Invalid phone number format. Message not sent.");
+                logger.Error("Invalid phone number format. Message not sent.");
                 throw new FormatException("Invalid phone number format.");
             }
 
             if (string.IsNullOrEmpty(message))
             {
-                Console.WriteLine("Empty message. Message not sent.");
+                logger.Error("Empty message. Message not sent.");
                 throw new ArgumentException("Empty message.");
             }
 
@@ -96,23 +96,20 @@ namespace MessageSender.Senders
                 var smsMessage = MessageResource.Create(messageOptions);
                 GetMessageSid(smsMessage.Sid);
 
-                Console.WriteLine($"SMS sent successfully to number: {smsMessage.To}!");
+                logger.Information($"SMS sent successfully to number: {smsMessage.To}!");
             }
             catch (Twilio.Exceptions.AuthenticationException ex)
             {
-                Console.WriteLine("Network error occurred. Message not sent.");
                 logger.Error(ex, "Network error occurred. Message not sent.");
                 throw new Twilio.Exceptions.AuthenticationException($"Error details: {ex.Message}");
             }
             catch (Twilio.Exceptions.ApiConnectionException ex)
             {
-                Console.WriteLine("Network error occurred. Message not sent.");
                 logger.Error(ex, "Network error occurred. Message not sent.");
                 throw new Twilio.Exceptions.ApiConnectionException($"Error details: {ex.Message}");
             }
             catch (Twilio.Exceptions.TwilioException ex)
             {
-                Console.WriteLine("Error occurred while sending the message. Message not sent.");
                 logger.Error(ex, "Error occurred while sending the message. Message not sent.");
                 throw new Twilio.Exceptions.TwilioException($"Error details: {ex.Message}");
             }
@@ -158,7 +155,7 @@ namespace MessageSender.Senders
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while fetching message status: {ex.Message}");
+                logger.Error(ex, $"An error occurred while fetching message status: {ex.Message}");
                 throw;
             }
         }
