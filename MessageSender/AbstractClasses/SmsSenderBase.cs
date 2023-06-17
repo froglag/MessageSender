@@ -37,18 +37,38 @@ namespace MessageSender.AbstractClasses
             PhoneNumber = phoneNumber;
         }
 
+        /// <summary>
+        /// Initializes the Twilio client with the account SID and authentication token.
+        /// </summary>
         protected void InitializeTwilioClient()
         {
             TwilioClient.Init(AccountSid, AuthToken);
         }
 
+        /// <summary>
+        /// Handles any exception that occurs during message sending.
+        /// </summary>
+        /// <param name="ex">The exception that occurred.</param>
         protected virtual void HandleException(Exception ex)
         {
             ExceptionOccurred?.Invoke(this, new ExceptionEventArgs(ex));
         }
+
+        /// <summary>
+        /// Checks if the message length is valid.
+        /// </summary>
+        /// <param name="message">The message to be sent.</param>
+        /// <returns>True if the message length is valid; otherwise, false.</returns>
         protected bool IsMessageValid(string message)
         {
             return message.Length <= MaxMessageLength;
         }
+
+        /// <summary>
+        /// Retrieves the delivery status of a sent message.
+        /// </summary>
+        /// <param name="messageId">The ID of the sent message.</param>
+        /// <returns>The delivery status of the message.</returns>
+        public abstract DeliveryStatus GetDeliveryStatus(string messageId);
     }
 }

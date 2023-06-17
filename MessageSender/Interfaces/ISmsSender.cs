@@ -9,7 +9,7 @@ namespace MessageSender.Interfaces
     /// <summary>
     /// Represents an interface for sending SMS messages.
     /// </summary>
-    public interface ISmsSender : IMessageSender
+    public interface ISmsSender : IMessageSender, IGetDeliveryStatus
     {
 
         /// <summary>
@@ -19,5 +19,7 @@ namespace MessageSender.Interfaces
         /// <param name="authToken">The authentication token.</param>
         /// <param name="phoneNumber">The phone number associated with the sender.</param>
         void SetSmsCredentials(string accountSid, string authToken, string phoneNumber);
+
+        DeliveryStatus GetDeliveryStatus(string messageId);
     }
 }
