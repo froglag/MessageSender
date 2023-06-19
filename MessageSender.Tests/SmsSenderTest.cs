@@ -4,19 +4,30 @@ using MessageSender.Senders;
 using Moq;
 using Twilio.Exceptions;
 using MessageSender.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace MessageSender.Tests
 {
     [TestClass]
     public class SmsSenderTest
     {
+        public IConfigurationRoot config;
+
+        [TestInitialize]
+        public void TestInit()
+        {
+            string appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+            IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile(appSettingsPath, false, true);
+            config = builder.Build();
+        }
+        
         [TestMethod]
         public async Task SendMessage_SuccessfullySendsMessage()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "REPLACED_AUTH_TOKEN";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
-            string recipient = "REPLACED_RECIPIENT";
+            string accountSid = config["Twilio:AccountSid"];
+            string authToken = config["Twilio:AuthToken"];
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
+            string recipient = config["Twilio:Recipient"];
             string message = "Test message to my phone number";
 
             var smsSender = new SmsSender();
@@ -33,9 +44,9 @@ namespace MessageSender.Tests
         [TestMethod]
         public void SendMessage_WrongRecipientNumber()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "REPLACED_AUTH_TOKEN";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
+            string accountSid = config["Twilio:AccountSid"];
+            string authToken = config["Twilio:AuthToken"];
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
             string recipient = "";
             string message = "Test message to my phone number";
 
@@ -49,10 +60,10 @@ namespace MessageSender.Tests
         [TestMethod]
         public void SendMessage_WrongPhoneNumber()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "REPLACED_AUTH_TOKEN";
+            string accountSid = config["Twilio:AccountSid"];
+            string authToken = config["Twilio:AuthToken"];
             string phoneNumber = "";
-            string recipient = "REPLACED_RECIPIENT";
+            string recipient = config["Twilio:Recipient"];
             string message = "Test message to my phone number";
 
             var smsSender = new SmsSender();
@@ -66,9 +77,9 @@ namespace MessageSender.Tests
         public void SendMessage_WrongAccountSid()
         {
             string accountSid = "";
-            string authToken = "REPLACED_AUTH_TOKEN";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
-            string recipient = "REPLACED_RECIPIENT";
+            string authToken = config["Twilio:AuthToken"];
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
+            string recipient = config["Twilio:Recipient"];
             string message = "Test message to my phone number";
 
             var smsSender = new SmsSender();
@@ -80,10 +91,10 @@ namespace MessageSender.Tests
         [TestMethod]
         public void SendMessage_WrongAuthorizationToken()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
+            string accountSid = config["Twilio:AccountSid"];
             string authToken = "";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
-            string recipient = "REPLACED_RECIPIENT";
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
+            string recipient = config["Twilio:Recipient"];
             string message = "Test message to my phone number";
 
             var smsSender = new SmsSender();
@@ -95,10 +106,10 @@ namespace MessageSender.Tests
         [TestMethod]
         public void SendMessage_WrongMessageLength()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "REPLACED_AUTH_TOKEN";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
-            string recipient = "REPLACED_RECIPIENT";
+            string accountSid = config["Twilio:AccountSid"];
+            string authToken = config["Twilio:AuthToken"];
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
+            string recipient = config["Twilio:Recipient"];
             string message = "1234567891011";
 
             var smsSender = new SmsSender();
@@ -111,10 +122,10 @@ namespace MessageSender.Tests
         [TestMethod]
         public void SendMessage_EmptyMessage()
         {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "REPLACED_AUTH_TOKEN";
-            string phoneNumber = "REPLACED_PHONE_NUMBER";
-            string recipient = "REPLACED_RECIPIENT";
+            string accountSid = config["Twilio:AccountSid"];
+            string authToken = config["Twilio:AuthToken"];
+            string phoneNumber = config["Twilio:FromPhoneNumber"];
+            string recipient = config["Twilio:Recipient"];
             string message = "";
 
             var smsSender = new SmsSender();
@@ -129,7 +140,7 @@ namespace MessageSender.Tests
             var smsSenderMock = new Mock<SmsSender>();
             var smsSender = smsSenderMock.Object;
 
-            string recipient = "REPLACED_RECIPIENT";
+            string recipient = config["Twilio:Recipient"];
             string message = "Test message to my phone number";
 
             // Setup the mock to throw an exception when SendMessage is called
@@ -139,31 +150,6 @@ namespace MessageSender.Tests
             ApiConnectionException exception = Assert.ThrowsException<ApiConnectionException>(() => smsSender.SendMessage(recipient, message));
 
             Assert.AreEqual("Network error occurred.", exception.Message);
-
-<<<<<<< HEAD
-        [TestMethod]
-        public void SendMessage_WrongPhoneNumberAndWrongAuthToken()
-        {
-            string accountSid = "REPLACED_ACCOUNT_SID";
-            string authToken = "invalid_auth_token";
-            string phoneNumber = "";
-            string recipient = "REPLACED_PHONE_NUMBER";
-            string message = "Test message to my phone number";
-
-            var smsSender = new SmsSender();
-            smsSender.SetSmsCredentials(accountSid, authToken, phoneNumber);
-
-            var ex = Assert.ThrowsException<AggregateException>(() => smsSender.SendMessage(recipient, message));
-
-            // Проверяем, что в исключении содержится исключение формата номера телефона
-            Assert.IsTrue(ex.InnerExceptions.Any(e => e is FormatException && e.Message == "Invalid phone number format."));
-
-            // Проверяем, что в исключении содержится исключение аутентификации
-            Assert.IsTrue(ex.InnerExceptions.Any(e => e is AuthenticationException && e.Message.StartsWith("Error details")));
-=======
-            // Verify that no additional actions were performed after the exception
-            smsSenderMock.Verify(s => s.SendMessage(recipient, message), Times.Once);
->>>>>>> 30858ae (Logger added to SmsSender.cs)
         }
     }
 }
